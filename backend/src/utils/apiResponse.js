@@ -1,0 +1,12 @@
+/**
+ * Standard API response builders.
+ * Keeps every response envelope consistent across all controllers.
+ */
+
+export const sendSuccess = (res, data, statusCode = 200) => {
+  res.status(statusCode).json({ success: true, data });
+};
+
+export const sendError = (res, message, statusCode = 400, errors = []) => {
+  res.status(statusCode).json({ success: false, message, errors });
+};
