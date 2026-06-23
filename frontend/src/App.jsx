@@ -11,48 +11,68 @@ import { Dashboard } from './pages/Dashboard';
 import { Projects } from './pages/Projects';
 import { Messages } from './pages/Messages';
 import { Portfolio } from './pages/public/Portfolio';
+import ProtectedRoute from './routes/ProtectedRoute';
 
 export default function App() {
   return (
     <HelmetProvider>
       <ThemeProvider>
         <BrowserRouter>
-          <AuthProvider>
-            <Routes>
-              {/* Public Portfolio Route */}
-              <Route path="/" element={
+          <Routes>
+            {/* ── Public portfolio — zero auth calls ─────────────────── */}
+            <Route
+              path="/"
+              element={
                 <PublicLayout>
                   <Portfolio />
                 </PublicLayout>
-              } />
-              
-              {/* Admin Routes */}
-              <Route path="/admin/login" element={<Login />} />
-              
-              <Route path="/admin" element={<AdminLayout />}>
+              }
+            />
+
+            {/* ── Admin area — AuthProvider scoped here only ──────────── */}
+            <Route
+              path="/admin/login"
+              element={
+                <AuthProvider>
+                  <Login />
+                </AuthProvider>
+              }
+            />
+
+            <Route
+              path="/admin"
+              element={
+                <AuthProvider>
+                  <ProtectedRoute />
+                </AuthProvider>
+              }
+            >
+              <Route element={<AdminLayout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="projects" element={<Projects />} />
                 <Route path="messages" element={<Messages />} />
               </Route>
-              
-              {/* Fallback to Home */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
+            </Route>
 
-            <Toaster 
-              theme="dark" 
-              position="bottom-right"
-              toastOptions={{
-                style: {
-                  background: 'var(--bg-surface)',
-                  border: '1px solid var(--border-color)',
-                  color: 'var(--text-main)'
-                }
-              }}
-            />
-          </AuthProvider>
+            {/* ── Fallback ────────────────────────────────────────────── */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+
+          <Toaster
+            theme="dark"
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-main)'
+              }
+            }}
+          />
         </BrowserRouter>
       </ThemeProvider>
     </HelmetProvider>
   );
 }
+
+

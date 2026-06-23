@@ -5,18 +5,11 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Global Interceptor: Handle 401 Unauthorized globally
+// Pass errors through — no global redirect.
+// Authenticated-page protection is handled by ProtectedRoute.
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // Avoid infinite redirects if we're already on login or checking auth
-      if (window.location.pathname !== '/admin/login') {
-        window.location.href = '/admin/login';
-      }
-    }
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default api;
